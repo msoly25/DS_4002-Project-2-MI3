@@ -1,0 +1,15 @@
+Debt Growth Decomposition Validation
+
+Method: midpoint decomposition
+Required reconciliation tolerance: 0.1%
+Maximum reconciliation error: 0.0000000000%
+Validation passed: True
+
+Recipient counts use unduplicated total recipients.
+This is an accounting decomposition, not causal.
+Period breakpoints are exploratory.
+
+The full-history row starts in FY2007.
+Quarterly segments start in FY2013 Q1.
+Therefore, quarterly segments do not sum to
+the full-history change.
