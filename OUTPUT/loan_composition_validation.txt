@@ -1,0 +1,11 @@
+Loan category and composition validation
+
+Category coverage >= 99%: True
+Debt reconciliation passed: True
+Average-balance reconciliation passed: True
+
+Category recipient counts overlap.
+Overlap factor = sum of category counts / unduplicated recipients.
+Reporting-gap effect accounts for differences between reported total and category sums.
+Breakpoints are exploratory.
+Decomposition is descriptive, not causal.
