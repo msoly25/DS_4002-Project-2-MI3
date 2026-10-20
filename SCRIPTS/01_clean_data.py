@@ -1,3 +1,7 @@
+from google.colab import drive
+drive.mount('/content/drive')
+
+!pip -q install openpyxl
 
 Input:
     PortfolioSummary.xlsx
