@@ -392,3 +392,252 @@ print(round(lag1, 3))
 
 print("\nWARNING: Results are exploratory.")
 print("Output files saved in:", OUT)
+
+
+# 11. Seasonality-adjusted time-series robustness check
+#
+# Unlike the earlier debt-level regression, this
+# analysis models changes in debt from quarter to
+# quarter. Fiscal-quarter indicators account for
+# seasonality. AR(1) and seasonal AR(1) errors
+# account for dependence at lags 1 and 4.
+#
+# Breakpoint dates come from the exploratory
+# debt-level model search. They are NOT treated
+# as independently verified structural breaks.
+
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+# Construct the quarterly-change series
+changes = quarterly.iloc[1:].copy().reset_index(drop=True)
+
+changes["change_billions"] = np.diff(y)
+
+# Q1 is the reference fiscal quarter.
+quarter_dummies = pd.get_dummies(
+    changes["quarter"],
+    prefix="fiscal",
+    drop_first=True,
+    dtype=float
+)
+
+# Fit models with zero, one, and two candidate
+# breakpoints using the same seasonal AR structure.
+ts_results = {}
+ts_comparison = []
+
+for count in (0, 1, 2):
+
+    candidate_breaks = best[count][0]
+
+    X = pd.DataFrame({
+        "baseline": np.ones(len(changes))
+    })
+
+    X = pd.concat(
+        [X, quarter_dummies],
+        axis=1
+    )
+
+    # A slope change in the cumulative series
+    # begins affecting differences AFTER its
+    # breakpoint observation.
+    for i, b in enumerate(candidate_breaks, 1):
+
+        break_date = quarterly.iloc[b]["period_end"]
+
+        X[f"after_break_{i}"] = (
+            changes["period_end"] > break_date
+        ).astype(float)
+
+    # Model quarterly changes with correlated errors.
+    model = SARIMAX(
+        changes["change_billions"],
+        exog=X,
+        order=(1, 0, 0),
+        seasonal_order=(1, 0, 0, 4),
+        trend="n",
+        enforce_stationarity=True,
+        enforce_invertibility=True
+    )
+
+    fit = model.fit(
+        disp=False,
+        maxiter=350
+    )
+
+    ts_results[count] = fit
+
+    # Exclude four initial residuals to reduce
+    # initialization effects in diagnostics.
+    residuals = fit.resid.iloc[4:]
+
+    # Account for two estimated AR parameters
+    # in the Ljung-Box degrees of freedom.
+    lb = acorr_ljungbox(
+        residuals,
+        lags=[4, 8],
+        model_df=2,
+        return_df=True
+    )
+
+    ts_comparison.append({
+        "breakpoint_count": count,
+        "breakpoints": "; ".join(
+            quarter_label(b)
+            for b in candidate_breaks
+        ) or "None",
+        "BIC": fit.bic,
+        "AIC": fit.aic,
+        "converged": bool(
+            fit.mle_retvals.get("converged", False)
+        ),
+        "Ljung_Box_p_lag4": lb.loc[4, "lb_pvalue"],
+        "Ljung_Box_p_lag8": lb.loc[8, "lb_pvalue"]
+    })
+
+
+# 12. Compare time-series models
+
+ts_table = pd.DataFrame(ts_comparison)
+
+converged = ts_table[ts_table["converged"]].copy()
+
+if converged.empty:
+    raise RuntimeError(
+        "No seasonal AR model converged. "
+        "Review fitting before interpreting results."
+    )
+
+selected_count = int(
+    converged.loc[
+        converged["BIC"].idxmin(),
+        "breakpoint_count"
+    ]
+)
+
+ts_table["selected"] = (
+    (ts_table["breakpoint_count"] == selected_count)
+    & ts_table["converged"]
+)
+
+ts_table.to_csv(
+    OUT / "seasonal_ar_model_comparison.csv",
+    index=False
+)
+
+selected_ts = ts_results[selected_count]
+
+
+# 13. Save the selected model coefficients
+
+conf = selected_ts.conf_int()
+parameter_rows = []
+
+for name, estimate in selected_ts.params.items():
+    parameter_rows.append({
+        "parameter": name,
+        "estimate": estimate,
+        "CI_lower": conf.loc[name].iloc[0],
+        "CI_upper": conf.loc[name].iloc[1]
+    })
+
+pd.DataFrame(parameter_rows).to_csv(
+    OUT / "seasonal_ar_coefficients.csv",
+    index=False
+)
+
+
+# 14. Save residual diagnostics
+
+selected_residuals = selected_ts.resid.iloc[4:]
+
+selected_lb = acorr_ljungbox(
+    selected_residuals,
+    lags=[4, 8],
+    model_df=2,
+    return_df=True
+)
+
+diagnostics = [
+    "Seasonality-adjusted AR model diagnostics",
+    "",
+    f"Selected model: {selected_count} breakpoints",
+    f"BIC: {selected_ts.bic:.3f}",
+    f"Converged: {selected_ts.mle_retvals.get('converged', False)}",
+    f"Lag-1 residual autocorrelation: {selected_residuals.autocorr(lag=1):.3f}",
+    f"Ljung-Box p-value lag 4: {selected_lb.loc[4, 'lb_pvalue']:.6g}",
+    f"Ljung-Box p-value lag 8: {selected_lb.loc[8, 'lb_pvalue']:.6g}",
+    "",
+    "Model: quarterly changes with fiscal-quarter",
+    "indicators, AR(1), and seasonal AR(1) at lag 4.",
+    "",
+    "CAUTION:",
+    "Breakpoints were previously selected using",
+    "the same underlying debt data.",
+    "This is a sensitivity analysis, not independent",
+    "confirmation of structural breaks.",
+    "Residual tests have limited power with 54",
+    "quarterly changes and a short final period.",
+    "Coefficient intervals are conditional on the",
+    "candidate breakpoint dates and model choice."
+]
+
+(OUT / "seasonal_ar_diagnostics.txt").write_text(
+    "\n".join(diagnostics) + "\n",
+    encoding="utf-8"
+)
+
+
+# 15. Plot observed versus fitted quarterly changes
+
+plt.figure(figsize=(11, 5))
+
+plt.plot(
+    changes["period_end"],
+    changes["change_billions"],
+    label="Observed quarterly change",
+    marker="o",
+    markersize=3
+)
+
+plt.plot(
+    changes["period_end"],
+    selected_ts.fittedvalues,
+    label="Seasonal AR fitted values",
+    linestyle="--"
+)
+
+plt.axhline(
+    0,
+    color="black",
+    linewidth=1
+)
+
+plt.title(
+    "Quarterly Debt Changes: Seasonally Adjusted AR Fit"
+)
+
+plt.xlabel("Reporting Date")
+plt.ylabel("Debt Change ($ Billions)")
+plt.grid(alpha=0.3)
+plt.legend()
+plt.tight_layout()
+
+plt.savefig(
+    OUT / "seasonal_ar_quarterly_fit.png",
+    dpi=300
+)
+
+plt.close()
+
+
+# 16. Display results in Colab
+
+print("\nSEASONALLY ADJUSTED MODEL COMPARISON")
+print(ts_table.to_string(index=False))
+
+print("\nSELECTED MODEL DIAGNOSTICS")
+print("\n".join(diagnostics))
+
+print("\nSeasonal AR analysis completed.")
