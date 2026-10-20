@@ -1,0 +1,21 @@
+Seasonality-adjusted AR model diagnostics
+
+Selected model: 2 breakpoints
+BIC: 400.632
+Converged: True
+Lag-1 residual autocorrelation: -0.016
+Ljung-Box p-value lag 4: 0.276401
+Ljung-Box p-value lag 8: 0.202362
+
+Model: quarterly changes with fiscal-quarter
+indicators, AR(1), and seasonal AR(1) at lag 4.
+
+CAUTION:
+Breakpoints were previously selected using
+the same underlying debt data.
+This is a sensitivity analysis, not independent
+confirmation of structural breaks.
+Residual tests have limited power with 54
+quarterly changes and a short final period.
+Coefficient intervals are conditional on the
+candidate breakpoint dates and model choice.

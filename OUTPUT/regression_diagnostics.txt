@@ -1,0 +1,20 @@
+Segmented regression diagnostics
+Quarterly observations: 55
+Selected breakpoint count: 2
+Breakpoints: FY2020 Q4, FY2024 Q4
+BIC: 453.535
+Durbin-Watson statistic: 1.029
+Residual lag-1 autocorrelation: 0.469
+Ljung-Box p-value (lag 4): 4.46644e-07
+Ljung-Box p-value (lag 8): 3.53717e-08
+
+Exploratory HAC p-values for slope changes:
+FY2020 Q4: 1.10825e-21
+FY2024 Q4: 1.89511e-05
+
+CAUTION: Outstanding debt is highly persistent.
+Ordinary BIC may favor spurious breakpoints
+when regression errors are serially correlated.
+HAC does not correct for searching breakpoints
+or potential nonstationarity in debt levels.
+Treat breakpoints and p-values as exploratory.
