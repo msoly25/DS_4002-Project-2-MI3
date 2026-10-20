@@ -1,0 +1,67 @@
+U.S. Federal Student Debt Analysis
+Final Model Evaluation Report
+=======================================================
+
+1. DATA
+Total observations: 61
+Quarterly observations: 55
+
+2. SEGMENTED REGRESSION
+Selected breakpoints: FY2020 Q4; FY2024 Q4
+Debt-level model BIC: 453.535
+Debt-level RMSE ($B): 12.915
+
+3. SEASONALLY ADJUSTED MODEL
+Selected breakpoint count: 2
+Seasonal AR BIC: 400.632
+Residual Ljung-Box p-value, lag 4: 0.2764
+Residual Ljung-Box p-value, lag 8: 0.2024
+
+Second growth-shift estimate: 10.002 billion/quarter
+Conditional 95% CI: [-2.953, 22.957]
+Interval includes zero: True
+
+4. TOTAL DEBT GROWTH DECOMPOSITION
+Observed debt increase ($B): 1208.500
+Recipient contribution ($B): 413.011
+Average-balance contribution ($B): 795.489
+Maximum reconciliation error (%): 0.0000000000
+
+5. LOAN CATEGORY AND COMPOSITION
+Minimum category coverage (%): 99.8617
+Within-category effect ($thousands): 18.1981
+Loan composition effect ($thousands): 6.1692
+Overlap effect ($thousands): -1.8641
+Maximum composition reconciliation error: 0.000000000000
+
+6. MI2 FINISH-LINE CHECKLIST
+PASS: Three segmented regression models evaluated
+PASS: Three seasonal AR models evaluated
+PASS: All seasonal AR models converged
+PASS: Segment slopes and HAC intervals reported
+PASS: Selected breakpoints documented
+PASS: Debt decomposition error <= 0.1%
+PASS: Loan category coverage >= 99%
+PASS: Loan category debt reconciliation
+PASS: Average balance effects reconcile
+PASS: Seasonal residual diagnostics reported
+
+ALL QUANTITATIVE CHECKS PASSED: True
+
+7. INTERPRETATION AND LIMITATIONS
+The analysis describes associations and
+accounting contributions, not causal effects.
+Debt outstanding is a persistent cumulative series.
+The original regression has autocorrelated errors.
+The seasonal AR model adjusts for quarterly
+seasonality and autoregressive dependence.
+Residual tests do not detect significant remaining
+autocorrelation at the evaluated lags, but cannot
+establish that residuals are independent.
+Breakpoint dates were selected from the same data.
+BIC preference does not establish structural breaks.
+Conditional confidence intervals do not account
+for the uncertainty of breakpoint selection.
+Annual FY2007-2012 observations are not included
+in the quarterly regression.
+Category recipients can overlap across programs.

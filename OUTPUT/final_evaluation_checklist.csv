@@ -1,0 +1,11 @@
+requirement,passed
+Three segmented regression models evaluated,True
+Three seasonal AR models evaluated,True
+All seasonal AR models converged,True
+Segment slopes and HAC intervals reported,True
+Selected breakpoints documented,True
+Debt decomposition error <= 0.1%,True
+Loan category coverage >= 99%,True
+Loan category debt reconciliation,True
+Average balance effects reconcile,True
+Seasonal residual diagnostics reported,True
