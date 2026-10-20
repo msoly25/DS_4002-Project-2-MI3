@@ -1,47 +1,48 @@
-from google.colab import drive
-drive.mount('/content/drive')
 
-!pip -q install openpyxl
+"""
+Script: 01_clean_data.py
+Project: U.S. Federal Student Debt Analysis
+
+Purpose:
+    Clean and validate the Federal Student Aid Portfolio
+    Summary dataset for subsequent statistical analysis.
 
 Input:
-    PortfolioSummary.xlsx
+    DATA/PortfolioSummary.xls
 
 Output:
     DATA/portfolio_clean.csv
+
+Required packages:
+    pandas, numpy, xlrd
 """
 
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-
-# 1. Set up project folders
-ROOT = Path("/content/drive/MyDrive/DS Project 2")
+# 1. Locate the project directory and data files
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "DATA"
-SCRIPTS_DIR = ROOT / "SCRIPTS"
 
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
-
-# Look for the original Excel file in either location.
-possible_files = [
-    DATA_DIR / "PortfolioSummary.xlsx",
-    ROOT / "PortfolioSummary.xlsx",
-]
-INPUT_FILE = next((file for file in possible_files if file.exists()), None)
+INPUT_FILE = DATA_DIR / "PortfolioSummary.xls"
 OUTPUT_FILE = DATA_DIR / "portfolio_clean.csv"
 
-if INPUT_FILE is None:
+# Check whether the original data file exists
+if not INPUT_FILE.exists():
     raise FileNotFoundError(
-        "Could not find PortfolioSummary.xlsx. Place it in either "
-        "the DS Project 2 folder or its DATA folder in Google Drive."
+        f"Dataset not found: {INPUT_FILE}"
     )
 
 print("Original Excel file found:", INPUT_FILE)
 
-
 # 2. Read the original Excel file
-raw = pd.read_excel(INPUT_FILE, header=None, engine="openpyxl")
+raw = pd.read_excel(
+    INPUT_FILE,
+    header=None,
+    engine="xlrd"
+)
+
 print("Original file dimensions:", raw.shape)
 
 # Assumes observations occupy zero-based rows 6 through 66
