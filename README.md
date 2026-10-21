@@ -41,7 +41,9 @@ DS_4002-Project-2-MI3/
 |   |-- 03_segmented_regression.py
 |   |-- 04_debt_decomposition.py
 |   |-- 05_loan_composition.py
-|   `-- 06_model_evaluation.py
+|   |-- 06_model_evaluation.py
+|   |-- 07_plot_debt_by_category.py
+|   `-- 08_plot_average_balance_per_recipient.py
 `-- OUTPUT/
     |-- average_balance_composition.csv
     |-- average_balance_effects.png
