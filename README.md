@@ -45,12 +45,14 @@ DS_4002-Project-2-MI3/
 `-- OUTPUT/
     |-- average_balance_composition.csv
     |-- average_balance_effects.png
+    |-- average_outstanding_balance_per_recipient.png
     |-- debt_decomposition_contributions.png
     |-- debt_growth_decomposition.csv
     |-- debt_growth_rates.csv
     |-- debt_over_time.png
     |-- debt_yoy_growth.png
     |-- decomposition_validation.txt
+    |-- federal_student_debt_by_loan_category.png
     |-- final_evaluation_checklist.csv
     |-- final_evaluation_report.txt
     |-- final_model_comparison.png
