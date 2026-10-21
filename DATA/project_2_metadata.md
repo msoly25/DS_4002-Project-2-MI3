@@ -45,10 +45,10 @@ The cleaned dataset is saved as `portfolio_clean.csv`.
 **EXPLANATORY** **PLOTS**
 
 
-![Federal Student Debt by Loan Category]
+Federal Student Debt by Loan Category
 <img width="1356" height="755" alt="Federal Student Debt By Loan Category" src="https://github.com/user-attachments/assets/c2ea5117-8bfc-4fb2-9321-8c58b05d7afa" />
 
-![Average Outstanding Balance Per Recipient]
+Average Outstanding Balance Per Recipient
 <img width="1069" height="617" alt="Average Outstanding Balance per Recipient" src="https://github.com/user-attachments/assets/973c7be3-57c5-404f-9c8e-52300911cc29" />
 
 """
