@@ -1,5 +1,5 @@
 
-"""PROJECT 2: METADATA
+PROJECT 2: METADATA
 
 
 ### **DATA SUMMARY**
@@ -51,4 +51,4 @@ Federal Student Debt by Loan Category
 Average Outstanding Balance Per Recipient
 <img width="1069" height="617" alt="Average Outstanding Balance per Recipient" src="https://github.com/user-attachments/assets/973c7be3-57c5-404f-9c8e-52300911cc29" />
 
-"""
+
