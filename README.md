@@ -12,18 +12,18 @@ The data comes from the Federal Student Aid Portfolio Summary [1]. It contains 6
 
 The analysis uses Python and the five packages below. Excel is not required because Python reads the original spreadsheet directly.
 
-The table lists the latest stable releases as of October 21, 2026 [2]–[7]. These versions have not been tested together on this project and are not a record of the versions used to generate the saved results.
+The table lists the versions used to run all eight scripts and regenerate the saved results on October 22, 2026 [2]–[7].
 
-| Software or package | Exact version | Purpose |
+| Software or package | Version | Purpose |
 |---|---|---|
-| Python | 3.15.1 | Runs the scripts |
-| NumPy | 2.5.4 | Performs numerical calculations |
-| pandas | 3.0.6 | Cleans data and works with tables |
+| Python | 3.11.15 | Runs the scripts |
+| NumPy | 2.4.6 | Performs numerical calculations |
+| pandas | 3.1.0 | Cleans data and works with tables |
 | Matplotlib | 3.11.2 | Creates figures |
 | statsmodels | 0.15.0 | Fits and checks statistical models |
 | xlrd | 2.0.2 | Reads the original `.xls` file |
 
-The current computer uses Windows, version 25H2, build 26200.9711. The metadata file was exported from Google Colab, but the platform used to generate the saved analysis results is not recorded.
+The verified run used Windows, version 25H2, build 26200.9711. Matplotlib used its noninteractive `Agg` backend to generate the figures.
 
 ## 2. Map of the Documentation
 
@@ -34,7 +34,7 @@ DS_4002-Project-2-MI3/
 |-- DATA/
 |   |-- PortfolioSummary.xls
 |   |-- portfolio_clean.csv
-|   `-- project_2_metadata.py
+|   `-- README.md
 |-- SCRIPTS/
 |   |-- 01_clean_data.py
 |   |-- 02_debt_trends.py
@@ -47,14 +47,14 @@ DS_4002-Project-2-MI3/
 `-- OUTPUT/
     |-- average_balance_composition.csv
     |-- average_balance_effects.png
-    |-- average_outstanding_balance_per_recipient.png
+    |-- Average Outstanding Balance per Recipient.png
     |-- debt_decomposition_contributions.png
     |-- debt_growth_decomposition.csv
     |-- debt_growth_rates.csv
     |-- debt_over_time.png
     |-- debt_yoy_growth.png
     |-- decomposition_validation.txt
-    |-- federal_student_debt_by_loan_category.png
+    |-- Federal Student Debt By Loan Category.png
     |-- final_evaluation_checklist.csv
     |-- final_evaluation_report.txt
     |-- final_model_comparison.png
@@ -74,7 +74,7 @@ DS_4002-Project-2-MI3/
     `-- selected_breakpoints.csv
 ```
 
-`PortfolioSummary.xls` is the original data. `portfolio_clean.csv` is the cleaned data used in the analysis. `project_2_metadata.py` contains the data description, source, ethical statements, data dictionary, and explanatory plots exported from Colab. It does not need to be run.
+`PortfolioSummary.xls` is the original data. `portfolio_clean.csv` is the cleaned data used in the analysis. `DATA/README.md` contains the data description, source, ethical statements, data dictionary, and explanatory plots.
 
 Output files ending in `.csv` are tables, `.png` files are figures, and `.txt` files are reports or calculation checks.
 
@@ -88,7 +88,7 @@ Use the included `DATA/PortfolioSummary.xls` file. Downloading a newer version f
 
 ### Step 2: Set up Python
 
-Install Python 3.15.1 [2] and open a terminal in the extracted project folder, where `README.md` is located. In Windows, you can open that folder in File Explorer, type `powershell` in the address bar, and press Enter.
+Install Python 3.11 [2] and open a terminal in the extracted project folder, where `README.md` is located. In Windows, you can open that folder in File Explorer, type `powershell` in the address bar, and press Enter.
 
 Check that Python is available:
 
@@ -105,22 +105,25 @@ python -m venv .venv
 Install the required packages into that environment:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install numpy==2.5.4 pandas==3.0.6 matplotlib==3.11.2 statsmodels==0.15.0 xlrd==2.0.2
+.\.venv\Scripts\python.exe -m pip install numpy==2.4.6 pandas==3.1.0 matplotlib==3.11.2 statsmodels==0.15.0 xlrd==2.0.2
 ```
 
-This command installs the exact package versions listed above. Other required dependencies are installed automatically. Results may differ from the saved outputs because the original software versions were not recorded.
+This command installs the exact package versions used in the verified run. Other required dependencies are installed automatically.
 
 ### Step 3: Run the scripts in order
 
 Run each command below separately. Wait for it to finish before running the next one. If a command reports an error, resolve it before continuing. These commands replace the cleaned data and generated outputs.
 
 ```powershell
+$env:MPLBACKEND = "Agg"
 .\.venv\Scripts\python.exe SCRIPTS/01_clean_data.py
 .\.venv\Scripts\python.exe SCRIPTS/02_debt_trends.py
 .\.venv\Scripts\python.exe SCRIPTS/03_segmented_regression.py
 .\.venv\Scripts\python.exe SCRIPTS/04_debt_decomposition.py
 .\.venv\Scripts\python.exe SCRIPTS/05_loan_composition.py
 .\.venv\Scripts\python.exe SCRIPTS/06_model_evaluation.py
+.\.venv\Scripts\python.exe SCRIPTS/07_plot_debt_by_category.py
+.\.venv\Scripts\python.exe SCRIPTS/08_plot_average_balance_per_recipient.py
 ```
 
 | Script | What it does |
@@ -131,6 +134,8 @@ Run each command below separately. Wait for it to finish before running the next
 | `04_debt_decomposition.py` | Divides debt growth into changes in borrower counts and changes in average balances. |
 | `05_loan_composition.py` | Examines changes across loan programs and accounts for recipients who appear in more than one program. |
 | `06_model_evaluation.py` | Compares model results, checks that the calculations add up, and creates a final report and checklist. |
+| `07_plot_debt_by_category.py` | Plots outstanding debt for Direct, FFEL, and Perkins loans. |
+| `08_plot_average_balance_per_recipient.py` | Plots average outstanding balances by loan program and for all recipients. |
 
 Scripts 4 and 5 need the breakpoint file created by script 3. Script 6 needs the results from the earlier scripts. Script 3 may take longer because it fits several models.
 
